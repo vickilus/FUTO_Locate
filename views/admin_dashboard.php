@@ -1,58 +1,74 @@
-<?php
-session_start();
-require_once __DIR__ . '/../controllers/DashboardController.php';
-require_once __DIR__ . '/../config/database.php';
-
-// Check if the user is an admin
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: login.php");
-    exit();
-}
-
-// Initialize dashboard controller
-$db = new Database();
-$connection = $db->getConnection();
-$dashboardController = new DashboardController($connection);
-
-// Fetch data for admin dashboard
-$data = $dashboardController->getAdminDashboardData();
-$users = $data['users'];
-$locations = $data['locations'];
-?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/public/assets/css/styles.css">
+    <title>Admin Dashboard - FUTO Locate</title>
+    <link rel="stylesheet" href="../public/css/special.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h2>Admin Dashboard</h2>
+    <h1>Admin Dashboard - Manage Users</h1>
+    
+    <div id="users-container">
+        <!-- User list will be loaded here via JavaScript -->
+    </div>
 
-    <section>
-        <h3>All Users</h3>
-        <ul>
-            <?php foreach ($users as $user): ?>
-                <li>
-                    <?php echo htmlspecialchars($user['username']); ?> - <?php echo htmlspecialchars($user['email']); ?>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </section>
+    <script>
+    $(document).ready(function() {
+        loadUsers();
 
-    <section>
-        <h3>All Locations</h3>
-        <ul>
-            <?php foreach ($locations as $location): ?>
-                <li>
-                    <h4><?php echo htmlspecialchars($location['name']); ?></h4>
-                    <p><?php echo htmlspecialchars($location['description']); ?></p>
-                    <p>Latitude: <?php echo htmlspecialchars($location['latitude']); ?>, Longitude: <?php echo htmlspecialchars($location['longitude']); ?></p>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </section>
+        function loadUsers() {
+            $.ajax({
+                url: "../public/admin_dashboard.php",
+                type: "GET",
+                dataType: "json",
+                success: function(users) {
+                    let html = '<table>';
+                    html += '<tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr>';
+                    users.forEach(user => {
+                        html += `<tr>
+                            <td>${user.id}</td>
+                            <td>${user.username}</td>
+                            <td>${user.email}</td>
+                            <td>${user.role}</td>
+                            <td>${user.status}</td>
+                            <td>
+                                <button onclick="changeStatus(${user.id}, '${user.status === 'active' ? 'inactive' : 'active'}')">
+                                    ${user.status === 'active' ? 'Deactivate' : 'Activate'}
+                                </button>
+                                <button onclick="changeRole(${user.id}, '${user.role === 'admin' ? 'user' : 'admin'}')">
+                                    ${user.role === 'admin' ? 'Demote to User' : 'Promote to Admin'}
+                                </button>
+                            </td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    $('#users-container').html(html);
+                },
+                error: function() {
+                    $('#users-container').html('<p>Error loading users.</p>');
+                }
+            });
+        }
+
+        window.changeStatus = function(userId, newStatus) {
+            $.post("../public/admin_dashboard.php", { action: "change_status", user_id: userId, status: newStatus }, function(response) {
+                alert(response.message);
+                loadUsers();
+            }, "json");
+        };
+
+        window.changeRole = function(userId, newRole) {
+            $.post("../public/admin_dashboard.php", { action: "change_role", user_id: userId, role: newRole }, function(response) {
+                alert(response.message);
+                loadUsers();
+            }, "json");
+        };
+    });
+    </script>
+
+<a href="../views/add_location.php">Add New Location</a>
+
+<p><a href="../views/home.php?action=Logout">Logout</a></p>
 </body>
 </html>

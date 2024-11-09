@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="/public/css/styles.css">
+    
+    <link rel="stylesheet" href="../public/css/styles.css"> 
 </head>
+
 <body>
     <h2>Login</h2>
     <form action="../public/login.php?action=login" method="POST">
@@ -14,6 +16,8 @@
         <input type="password" name="password" required>
         <button type="submit">Login</button>
     </form>
-    <p><a href="../public/home.php?action=forgot_password">Forgot Password?</a></p>
+    <br><br>
+    
+    <a href="../views/forgot_password.php?action=forgot_password">Forgot Password?</a>
 </body>
 </html>
