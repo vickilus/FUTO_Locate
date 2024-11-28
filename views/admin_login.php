@@ -1,88 +1,44 @@
-<?php
-session_start();
-include '../config/Database.php'; // Database connection file
-
-$errors = [];
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Collect and sanitize form data
-    $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
-
-    // Form validation
-    if (empty($email)) {
-        $errors[] = "Email is required.";
-    }
-    if (empty($password)) {
-        $errors[] = "Password is required.";
-    }
-
-    // If no validation errors
-    if (empty($errors)) {
-        if (isset($conn)) {
-            // Prepare the SQL statement to fetch admin details
-            $stmt = $conn->prepare("SELECT * FROM admins WHERE email = ?");
-            $stmt->bind_param("s", $email);
-            $stmt->execute();
-            $result = $stmt->get_result();
-
-            if ($result->num_rows > 0) {
-                $admin = $result->fetch_assoc();
-
-                // Verify the password
-                if (password_verify($password, $admin['password'])) {
-                    // Successful login: Set session variables
-                    $_SESSION['admin_id'] = $admin['id'];
-                    $_SESSION['admin_email'] = $admin['email'];
-                    $_SESSION['admin_username'] = $admin['username'];
-
-                    // Redirect to admin dashboard
-                    header("Location: ../views/admin_dashboard.php");
-                    exit();
-                } else {
-                    $errors[] = "Incorrect password.";
-                }
-            } else {
-                $errors[] = "No admin found with this email.";
-            }
-        } else {
-            $errors[] = "Database connection error.";
-        }
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Login</title>
-    <link rel="stylesheet" href="../public/css/styles.css">  <!-- Link to your CSS file -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FUTO Locate - Admin Login</title>
+    <link rel="stylesheet" href="../public/css/style2.css">
+    <script src="../public/js/togglePasswordVisibility.js" defer></script>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Admin Login</h2>
+  
 
-        <!-- Display errors, if any -->
-        <?php if (!empty($errors)) : ?>
-            <div class="errors">
-                <?php foreach ($errors as $error) : ?>
-                    <p><?php echo htmlspecialchars($error); ?></p>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <span class="logo">FUTO Locate Admin Login</span>
+        </nav>
+        
+        <!-- Login Form -->
+        <div class="admin-container">
+            <h2>Login</h2>
+            <form action="../public/admin_login.php?action=login" method="POST">
+                <label for="email">email</label>
+                <input type="email" name="email" required>
 
-        <form action="admin_login.php" method="POST">
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit">Login</button>
-        </form>
+                <label for="password">Password</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility()">👁️</span>
+                </div>
+
+               <button type="submit">Admin Login</button>
+
+               <label for="forgot password"></label>
+                <div class="forgot password-container">
+                <a href="../views/forgot_password.php?action=forgot_password">Forgot Password?</a>
+                </div>
+            </form>
+        </div>
     </div>
+
+   <a href="../views/home.php?action=home">Home Page</a>
 </body>
 </html>

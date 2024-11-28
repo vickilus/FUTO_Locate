@@ -3,7 +3,7 @@
    <head>
        <meta charset="UTF-8">
        <title>FUTO Locate - Add Location</title>
-       <link rel="stylesheet" href="../public/css/styles.css">
+       <link rel="stylesheet" href="../public/css/style2.css">
        
    </head>
    <body>
