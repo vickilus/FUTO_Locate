@@ -1,50 +1,53 @@
 <?php
-require_once '../config/Database.php'; // Ensure the path to db.php is correct
+// Place this at the top of admin_dashboard.php to handle session and fetch users
+session_start();
+include '../config/Database.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Retrieve all users
-    $result = $mysqli->query("SELECT id, username, email, role, status FROM users");
-    $users = $result->fetch_all(MYSQLI_ASSOC);
-    echo json_encode($users);
-    exit;
-}
- 
-    // Check if the mysqli connection is established
-    
-    $mysqli = new mysqli("localhost", "root", "", "futo_locate");
-    
-    // Check connection
-    if ($mysqli->connect_error) {
-        die("Database connection failed: " . $mysqli->connect_error);
-    }
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $response = ["success" => false, "message" => "Invalid action."];
-    
-    if (isset($_POST['action']) && isset($_POST['user_id'])) {
-        $userId = (int)$_POST['user_id'];
-
-        if ($_POST['action'] === 'change_status' && isset($_POST['status'])) {
-            $newStatus = $_POST['status'] === 'active' ? 'active' : 'inactive';
-            $stmt = $mysqli->prepare("UPDATE users SET status = ? WHERE id = ?");
-            $stmt->bind_param("si", $newStatus, $userId);
-            $response["success"] = $stmt->execute();
-            $response["message"] = $response["success"] ? "User status updated." : "Failed to update user status.";
-            $stmt->close();
-        } elseif ($_POST['action'] === 'change_role' && isset($_POST['role'])) {
-            $newRole = $_POST['role'] === 'admin' ? 'admin' : 'user';
-            $stmt = $mysqli->prepare("UPDATE users SET role = ? WHERE id = ?");
-            $stmt->bind_param("si", $newRole, $userId);
-            $response["success"] = $stmt->execute();
-            $response["message"] = $response["success"] ? "User role updated." : "Failed to update user role.";
-            $stmt->close();
-        }
-    }
-
-    echo json_encode($response);
-    exit;
+// Fetch users from the database
+function fetchUsers($conn) {
+    $result = $conn->query("SELECT * FROM users");
+    return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 }
 
-$mysqli->close();
+$users = fetchUsers($conn);
+
+// Create a new user
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+
+    $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $username, $email, $password);
+    $stmt->execute();
+    header("Location: ../views/admin_dashboard.php");
+    exit();
+}
+
+// Update an existing user
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
+    $id = $_POST['id'];
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+
+    $stmt = $conn->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
+    $stmt->bind_param("ssi", $username, $email, $id);
+    $stmt->execute();
+    header("Location: ../views/admin_dashboard.php");
+    exit();
+}
+
+// Delete a user
+if (isset($_GET['delete'])) {
+    $id = $_GET['delete'];
+
+    $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    header("Location: ../views/admin_dashboard.php");
+    exit();
+}
+
+// Fetch users to display
+$users = fetchUsers($conn);
 ?>

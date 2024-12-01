@@ -1,40 +1,44 @@
 <?php
 // Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "futo_locate";
+$host = 'localhost';
+$dbname = 'futo_locate';
+$user = 'root';
+$pass = '';
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Connect using MySQLi
+$mysqli = new mysqli($host, $user, $pass, $dbname);
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+// Check for connection errors
+if ($mysqli->connect_error) {
+    die("Connection failed: " . $mysqli->connect_error);
 }
 
-// Search for a location
-if (isset($_GET['query'])) {
-    $query = $_GET['query'];
-    $sql = "SELECT * FROM locations WHERE name LIKE ?";
-    $stmt = $conn->prepare($sql);
-    $search = "%$query%";
-    $stmt->bind_param("s", $search);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        // Output the place details
-        while ($row = $result->fetch_assoc()) {
-            echo "<div class='place-result'>";
-            echo "<h2>" . htmlspecialchars($row['name']) . "</h2>";
-            echo "<p>" . htmlspecialchars($row['description']) . "</p>";
-            echo "<img src='" . htmlspecialchars($row['image']) . "' alt='" . htmlspecialchars($row['name']) . "'/>";
-            echo "<p>Coordinates: (" . htmlspecialchars($row['latitude']) . ", " . htmlspecialchars($row['longitude']) . ")</p>";
-            echo "</div>";
-        }
+// Handle the search request
+if (isset($_GET['q'])) {
+    $searchQuery = $_GET['q'];
+    $query = "SELECT * FROM locations WHERE name LIKE ?";
+    $stmt = $mysqli->prepare($query);
+    
+    if ($stmt) {
+        // Bind parameters and execute the statement
+        $likeQuery = '%' . $searchQuery . '%';
+        $stmt->bind_param('s', $likeQuery);
+        $stmt->execute();
+        
+        // Get the result
+        $result = $stmt->get_result();
+        $locations = $result->fetch_all(MYSQLI_ASSOC);
+        
+        // Send JSON response
+        header('Content-Type: application/json');
+        echo json_encode($locations);
+        
+        // Close statement and connection
+        $stmt->close();
     } else {
-        echo "<p>Location not found.</p>";
+        echo "Failed to prepare statement: " . $mysqli->error;
     }
 }
 
-$conn->close();
+$mysqli->close();
 ?>
