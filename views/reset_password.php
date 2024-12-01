@@ -17,7 +17,7 @@ $token = $_SESSION['reset_token'];
 <head>
   <meta charset="UTF-8">
   <title>Reset Password</title>
-  <link rel="stylesheet" href="../public/css/styles.css">
+  <link rel="stylesheet" href="../public/css/webpage.css">
 </head>
 <body>
   <h2>Reset Your Password</h2>

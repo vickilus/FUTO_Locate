@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Logout Confirmation</title>
-    <link rel="stylesheet" href="../public/css/styles.css">
+    <link rel="stylesheet" href="../public/css/webpage.css">
     
 </head>
 <body>
