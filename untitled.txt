@@ -1,0 +1,60 @@
+
+    public function __construct($dbConnection)
+    {
+        $this->connection = $dbConnection;
+    }
+
+    /**
+     * Get all locations for admin view
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function getAllLocations()
+    {
+        $query = "SELECT * FROM locations";
+        return $this->executeQuery($query);
+    }
+
+    /**
+     * Get bookmarked locations for a specific user
+     *
+     * @param int $userId
+     * @return array
+     * @throws Exception
+     */
+    public function getBookmarkedLocations($userId)
+    {
+        $query = "SELECT l.* 
+                   FROM locations l
+                   INNER JOIN user_bookmarks ub ON (link unavailable) = ub.location_id
+                   WHERE ub.user_id = ?";
+        return $this->executeQuery($query, [$userId]);
+    }
+
+    /**
+     * Execute a query and return the results
+     *
+     * @param string $query
+     * @param array $params
+     * @return array
+     * @throws Exception
+     */
+    private function executeQuery($query, $params = [])
+    {
+        try {
+            $stmt = $this->connection->prepare($query);
+            if (!empty($params)) {
+                $types = str_repeat('s', count($params));
+                $stmt->bind_param($types, ...$params);
+            }
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $data = $result->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+            return $data;
+        } catch (Exception $e) {
+            throw new Exception("Database error: " . $e->getMessage());
+        }
+    }
+}
