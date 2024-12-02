@@ -7,6 +7,9 @@
     
 </head>
 <body>
+
+    
+        <!-- Signup -->
     <h2>Signup</h2>
     <form action="../public/admin_signup.php" method="POST">
         <label for="username">Username:</label>
