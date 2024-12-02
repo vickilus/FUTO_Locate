@@ -43,7 +43,7 @@
                             <button type="submit" name="update">Update</button>
                         </form>
 
-                        <!-- Delete Link -->
+                        <!-- Delete Links -->
                         <a href="../public/admin_dashboard.php?delete=<?php echo $user['id']; ?>" onclick="return confirm('Are you sure you want to delete this user?')">Delete</a>
                     </td>
                 </tr>
