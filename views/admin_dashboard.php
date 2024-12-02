@@ -21,6 +21,7 @@
     </form>
 
     <h2>All Users</h2>
+    
     <table>
         <tr>
             <th>ID</th>
