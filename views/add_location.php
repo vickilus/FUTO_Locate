@@ -17,6 +17,7 @@
                <option value="Building">Building</option>
                <option value="Office">Office</option>
                <option value="Library">Library</option>
+              
                <!-- Add other categories as needed -->
            </select>
 
