@@ -1,1 +1,0 @@
-how does an owner grant access
