@@ -12,11 +12,13 @@
 
     <div class="container">
         <!-- Navbar -->
+        
         <nav class="navbar">
             <span class="logo">FUTO Locate Admin Login</span>
         </nav>
         
         <!-- Login Form -->
+        
         <div class="admin-container">
             <h2>Login</h2>
             <form action="../public/admin_login.php?action=login" method="POST">
