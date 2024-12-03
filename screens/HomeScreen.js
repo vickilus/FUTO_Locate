@@ -6,6 +6,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Text>Welcome to the Home Screen!</Text>
+      <Text>This is a location tracking app</Text>
     </View>
   );
 };
