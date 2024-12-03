@@ -1,80 +1,38 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../src/models/UserModel.php';
-require_once __DIR__ . '/../src/utilities/AuthHelper.php';
+// reset_password.php
 
-// Initialize database connection
-$db = new Database();
-$connection = $db->getConnection();
+session_start();
 
-// Instantiate the UserModel
-$userModel = new UserModel($connection);
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $token = $_POST['token'];
-    $newPassword = $_POST['new_password'];
-    $confirmPassword = $_POST['confirm_password'];
-
-    // Validate token, passwords, and confirmation match
-    if (empty($token)) {
-        header("Location: reset_password.php?error=Invalid token.");
-        exit();
-    }
-    if ($newPassword !== $confirmPassword) {
-        header("Location: reset_password.php?token=$token&error=Passwords do not match.");
-        exit();
-    }
-
-    // Verify the token and get user ID
-    $userId = $userModel->verifyResetToken($token);
-    if (!$userId) {
-        header("Location: reset_password.php?error=Invalid or expired token.");
-        exit();
-    }
-
-    // Hash the new password
-    $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
-
-    // Update the user's password and clear reset token
-    if ($userModel->updatePassword($userId, $hashedPassword)) {
-        $userModel->clearResetToken($userId);
-        header("Location: login.php?success=Password reset successfully. Please log in.");
-    } else {
-        header("Location: reset_password.php?token=$token&error=Failed to reset password.");
-    }
+// Check if reset token exists in the session
+if (!isset($_SESSION['reset_token'])) {
+    die("Token not found. Please request a new password reset.");
 }
+
+// Retrieve the token from the session
+$token = $_SESSION['reset_token'];
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password</title>
-    <link rel="stylesheet" href="/public/assets/css/styles.css">
+  <meta charset="UTF-8">
+  <title>Reset Password</title>
+  <link rel="stylesheet" href="../public/css/webpage.css">
 </head>
 <body>
-    <h2>Reset Your Password</h2>
+  <h2>Reset Your Password</h2>
+  <form action="reset_password.php" method="POST">
+    <!-- Embed the token securely as a hidden field -->
+    <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
 
-    <?php
-    // Display error or success messages
-    if (isset($_GET['error'])) {
-        echo '<p class="error-message">' . htmlspecialchars($_GET['error']) . '</p>';
-    } elseif (isset($_GET['success'])) {
-        echo '<p class="success-message">' . htmlspecialchars($_GET['success']) . '</p>';
-    }
-    ?>
+    <label for="newPassword">New Password:</label>
+    <input type="password" id="newPassword" name="new_password" required minlength="8">
 
-    <form action="reset_password.php" method="POST">
-        <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token'] ?? ''); ?>">
-        
-        <label for="new_password">New Password:</label>
-        <input type="password" name="new_password" required>
+    <label for="confirmPassword">Confirm New Password:</label>
+    <input type="password" id="confirmPassword" name="confirm_password" required minlength="8">
 
-        <label for="confirm_password">Confirm Password:</label>
-        <input type="password" name="confirm_password" required>
-
-        <button type="submit">Reset Password</button>
-    </form>
+    <button type="submit">Reset Password</button>
+  </form>
 </body>
 </html>
+

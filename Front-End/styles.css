@@ -1,0 +1,304 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.app-container {
+  position: relative;
+  width: 100%;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  height: 100vh;
+}
+
+.flex_contain {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: fit-content;
+  position: relative;
+}
+
+.purple {
+  color: #0b7534;
+  font-weight: bold;
+}
+
+.navbar {
+  padding: 12px 16px;
+  position: absolute;
+  top: 0;
+  left: -90%;
+  bottom: 0;
+  width: 80%;
+  max-width: 350px;
+  background: whitesmoke;
+  z-index: 9999;
+  border-radius: 25px;
+  transition: 0.2s ease-in-out;
+}
+
+.navbar.active {
+  left: 0;
+}
+
+.navs {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: relative;
+  height: 100%;
+}
+
+.navs .profile_d {
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.navs .profile_d h2 {
+  font-size: 20px;
+  color: gray;
+}
+
+.navs .profile_d p {
+  color: rgb(147, 142, 142);
+}
+
+.flex_col {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.flex_r {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.flex_r span {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #b6e0c1;
+}
+
+.flex_r span i {
+  font-size: 14px;
+  color: #0b7534;
+}
+
+.logout .flex_r span i {
+  font-size: 14px;
+  color: #7e7a82;
+}
+
+.flex_r p {
+  color: #0b7534;
+  font-weight: bold;
+  font-size: 16px;
+}
+.logout .flex_r p {
+  color: #7e7a82;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.flex_contain div {
+  width: 40%;
+  font-weight: bolder;
+  text-transform: uppercase;
+}
+
+.icon {
+  cursor: pointer;
+}
+
+.line {
+  margin-bottom: 20px;
+}
+
+.logout {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  height: 80px;
+}
+
+.profile_image {
+  width: 50px;
+  height: 50px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.profile_image img {
+  width: 100%;
+  height: 100%;
+}
+
+header {
+  padding: 5px 10px;
+  background: transparent;
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 40px;
+  background: white;
+  z-index: 99;
+}
+
+@media only screen and (max-width: 420px) {
+  header {
+    max-width: 250px;
+  }
+
+  #search-bar {
+    max-width: 70%;
+    padding: 5px;
+  }
+}
+
+header i {
+  font-size: 20px;
+  color: #0b7534;
+  display: flex;
+}
+
+header input {
+  border: none;
+  outline: none;
+}
+
+.absolute1 {
+  padding: 10px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  right: 0%;
+  background: ghostwhite;
+}
+
+#search-bar {
+  width: 82%;
+  padding: 10px;
+  font-size: 16px;
+
+  /* background: transparent; */
+}
+
+.location-list {
+  display: none;
+  max-width: 400px;
+  position: absolute;
+  height: 400px;
+  top: 100%;
+  right: 0;
+}
+
+.location_contain {
+  display: flex;
+  flex-direction: column;
+}
+
+.location-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  border-bottom: 2px solid gray;
+}
+
+.location-card h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.location-card p {
+  color: #555;
+}
+
+.map-container {
+  height: 100%;
+  width: 100%;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.absolute2 {
+  position: absolute;
+  bottom: 1%;
+  left: 2%;
+  right: 2%;
+  padding: 15px;
+  overflow: hidden;
+}
+
+.img_loc {
+  height: 150px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.img_loc img {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-container {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+}
+
+.location-details {
+  padding: 15px;
+  background: white;
+}
+
+.location-details h2 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 8px;
+  color: #0b7534;
+  margin: 10px 0;
+}
+
+.location-details p {
+  font-size: 14px;
+  color: #9af5bd;
+}
+
+.swiper-pagination-bullet {
+  background: #333;
+}

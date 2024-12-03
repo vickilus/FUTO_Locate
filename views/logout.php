@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Logout Confirmation</title>
+    <link rel="stylesheet" href="../public/css/webpage.css">
+    
 </head>
 <body>
     <h2>Are you sure you want to log out?</h2>

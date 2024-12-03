@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location:../views/login.php");
         exit();
     } else {
-        echo "Error: Could not register user.";
+        echo "Error: user already exist.";
     }
 }
 ?>

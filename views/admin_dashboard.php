@@ -1,58 +1,62 @@
-<?php
-session_start();
-require_once __DIR__ . '/../controllers/DashboardController.php';
-require_once __DIR__ . '/../config/database.php';
-
-// Check if the user is an admin
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: login.php");
-    exit();
-}
-
-// Initialize dashboard controller
-$db = new Database();
-$connection = $db->getConnection();
-$dashboardController = new DashboardController($connection);
-
-// Fetch data for admin dashboard
-$data = $dashboardController->getAdminDashboardData();
-$users = $data['users'];
-$locations = $data['locations'];
-?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/public/assets/css/styles.css">
+    <link rel="stylesheet" href="../public/css/webpage.css">
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        table, th, td { border: 1px solid black; padding: 10px; text-align: left; }
+    </style>
 </head>
 <body>
-    <h2>Admin Dashboard</h2>
+    <h1>Admin Dashboard</h1>
 
-    <section>
-        <h3>All Users</h3>
-        <ul>
+    <h2>Create User</h2>
+    <form method="POST" action="../public/admin_dashboard.php">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit" name="create">Create User</button>
+    </form>
+
+    <h2>All Users</h2>
+    
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        <?php if (!empty($users)): ?>
             <?php foreach ($users as $user): ?>
-                <li>
-                    <?php echo htmlspecialchars($user['username']); ?> - <?php echo htmlspecialchars($user['email']); ?>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </section>
+                <tr>
+                    <td><?php echo htmlspecialchars($user['id']); ?></td>
+                    <td><?php echo htmlspecialchars($user['username']); ?></td>
+                    <td><?php echo htmlspecialchars($user['email']); ?></td>
+                    <td>
+                        <!-- Update Form -->
+                        <form method="POST" action="../public/admin_dashboard.php" style="display:inline;">
+                            <input type="hidden" name="id" value="<?php echo htmlspecialchars($user['id']); ?>">
+                            <input type="text" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
+                            <input type="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+                            <button type="submit" name="update">Update</button>
+                        </form>
 
-    <section>
-        <h3>All Locations</h3>
-        <ul>
-            <?php foreach ($locations as $location): ?>
-                <li>
-                    <h4><?php echo htmlspecialchars($location['name']); ?></h4>
-                    <p><?php echo htmlspecialchars($location['description']); ?></p>
-                    <p>Latitude: <?php echo htmlspecialchars($location['latitude']); ?>, Longitude: <?php echo htmlspecialchars($location['longitude']); ?></p>
-                </li>
+                        <!-- Delete Links -->
+                        <a href="../public/admin_dashboard.php?delete=<?php echo $user['id']; ?>" onclick="return confirm('Are you sure you want to delete this user?')">Delete</a>
+                    </td>
+                </tr>
             <?php endforeach; ?>
-        </ul>
-    </section>
+        <?php else: ?>
+            <tr><td colspan="4">No users found.</td></tr>
+        <?php endif; ?>
+    </table>
+    <br><br>
+
+    <a href="../views/add_location.php">Add New Location</a>
+    <br><br>
+    <p><a href="../views/home.php?action=Logout">Logout</a></p>
 </body>
 </html>
